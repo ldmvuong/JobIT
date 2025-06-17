@@ -20,6 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         fit.hcmute.JobIT.entity.User user = userService.getUserByEmail(username);
 
+        if (user == null) {
+            throw new UsernameNotFoundException("Username or password is incorrect");
+        }
+
         return new User(
                 user.getEmail(),
                 user.getPassword(),

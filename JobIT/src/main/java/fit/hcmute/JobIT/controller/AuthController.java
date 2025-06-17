@@ -1,6 +1,9 @@
 package fit.hcmute.JobIT.controller;
 
 import fit.hcmute.JobIT.model.request.LoginRequest;
+import fit.hcmute.JobIT.model.response.LoginResponse;
+import fit.hcmute.JobIT.util.SecurityUtil;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,18 +18,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final SecurityUtil securityUtil;
 
 
     @PostMapping("/login")
-    public ResponseEntity<LoginRequest> login(@RequestBody LoginRequest loginRequest) {
-        // Implement login logic here
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         //Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
-
         //xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        return ResponseEntity.ok(loginRequest);
+        //Nếu xác thực thành công, tạo token
+        String access_token = securityUtil.createToken(authentication);
+
+        //Trả về response
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setAccessToken(access_token);
+        return ResponseEntity.ok(loginResponse);
     }
 }
