@@ -1,7 +1,7 @@
 package fit.hcmute.JobIT.controller;
 
-import fit.hcmute.JobIT.model.request.LoginRequest;
-import fit.hcmute.JobIT.model.response.LoginResponse;
+import fit.hcmute.JobIT.dto.request.LoginRequest;
+import fit.hcmute.JobIT.dto.response.LoginResponse;
 import fit.hcmute.JobIT.util.SecurityUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

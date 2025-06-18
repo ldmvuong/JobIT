@@ -1,11 +1,10 @@
 package fit.hcmute.JobIT.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fit.hcmute.JobIT.model.response.RestResponse;
+import fit.hcmute.JobIT.dto.response.RestResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
@@ -45,7 +44,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         restResponse.setError(errorMessage);
         restResponse.setMessage("Token không hợp lệ hoặc đã hết hạn");
-
         mapper.writeValue(response.getWriter(), restResponse);
     }
 }

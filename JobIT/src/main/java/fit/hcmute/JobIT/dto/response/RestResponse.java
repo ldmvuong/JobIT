@@ -1,4 +1,4 @@
-package fit.hcmute.JobIT.model.response;
+package fit.hcmute.JobIT.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

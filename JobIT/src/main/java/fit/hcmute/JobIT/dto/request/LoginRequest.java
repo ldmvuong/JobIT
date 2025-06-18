@@ -1,4 +1,4 @@
-package fit.hcmute.JobIT.model.request;
+package fit.hcmute.JobIT.dto.request;
 
 
 import jakarta.validation.constraints.NotBlank;

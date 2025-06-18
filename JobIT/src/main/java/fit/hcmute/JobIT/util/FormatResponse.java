@@ -1,8 +1,8 @@
 package fit.hcmute.JobIT.util;
 
-import fit.hcmute.JobIT.model.response.RestResponse;
+import fit.hcmute.JobIT.dto.response.RestResponse;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;

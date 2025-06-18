@@ -1,8 +1,6 @@
-package fit.hcmute.JobIT.model.response;
+package fit.hcmute.JobIT.dto.response;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class LoginResponse {
