@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalException {
 
+    // Xử lý các exception liên quan đến xác thực người dùng
     @ExceptionHandler(value = {
-            IdInvalidException.class,
             UsernameNotFoundException.class,
             BadCredentialsException.class
     })
