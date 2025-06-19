@@ -6,6 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResultPaginationResponse {
+
     private Meta meta;
+
     private Object result;
 }

@@ -25,5 +25,4 @@ public class WebConfig {
         source.registerCorsConfiguration("/**", configuration); // Apply this configuration to all paths
         return source;
     }
-
 }

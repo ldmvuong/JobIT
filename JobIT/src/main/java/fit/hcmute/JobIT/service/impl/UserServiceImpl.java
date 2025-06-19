@@ -8,7 +8,10 @@ import fit.hcmute.JobIT.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -28,8 +31,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultPaginationResponse getAllUsers(Pageable pageable) {
-        Page<User> pageUser = userRepository.findAll(pageable);
+    public ResultPaginationResponse getAllUsers(Specification<User> specification, Pageable pageable) {
+        Page<User> pageUser = userRepository.findAll(specification, pageable);
         ResultPaginationResponse resultPaginationResponse = new ResultPaginationResponse();
         Meta meta = new Meta();
 

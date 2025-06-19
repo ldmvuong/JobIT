@@ -1,6 +1,7 @@
 package fit.hcmute.JobIT.util;
 
 import fit.hcmute.JobIT.dto.response.RestResponse;
+import fit.hcmute.JobIT.util.annotation.ApiMessage;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.core.MethodParameter;
@@ -13,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @ControllerAdvice
 public class FormatResponse implements ResponseBodyAdvice<Object> {
-
 
     @Override
     public Object beforeBodyWrite(Object body,
@@ -43,7 +43,8 @@ public class FormatResponse implements ResponseBodyAdvice<Object> {
         } else {
             // If the response is successful, we set the data field
             restResponse.setData(body);
-            restResponse.setMessage("Called API successfully");
+            ApiMessage apiMessage = returnType.getMethodAnnotation(ApiMessage.class);
+            restResponse.setMessage(apiMessage != null ? apiMessage.value() : "Call api successful");
         }
         return restResponse;
     }

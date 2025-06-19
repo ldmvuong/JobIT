@@ -1,26 +1,27 @@
 package fit.hcmute.JobIT.controller;
 
+import com.turkraft.springfilter.boot.Filter;
 import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
 import fit.hcmute.JobIT.entity.User;
 import fit.hcmute.JobIT.service.UserService;
+import fit.hcmute.JobIT.util.annotation.ApiMessage;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/api/v1")
 public class UserController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
@@ -29,20 +30,12 @@ public class UserController {
     }
 
     @GetMapping("/users")
+    @ApiMessage("Get all users with pagination and filtering")
     public ResponseEntity<ResultPaginationResponse> getAllUsers(
-            @RequestParam("current") Optional<String> currentOptional,
-            @RequestParam("pageSize") Optional<String> pageSizeOptional
+            @Filter Specification<User> specification,
+            Pageable pageable
     ) {
-
-        String sCurrent = currentOptional.orElse("");
-        String sPageSize = pageSizeOptional.orElse("");
-
-        int current = Integer.parseInt(sCurrent) - 1;
-        int pageSize = Integer.parseInt(sPageSize);
-
-        Pageable pageable = PageRequest.of(current, pageSize);
-
-        return ResponseEntity.ok(userService.getAllUsers(pageable));
+        return ResponseEntity.ok(userService.getAllUsers(specification, pageable));
     }
 
     @PostMapping("/users")
@@ -58,7 +51,6 @@ public class UserController {
         User updatedUser = userService.updateUser(user);
         return ResponseEntity.ok(updatedUser);
     }
-
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {

@@ -1,17 +1,20 @@
 package fit.hcmute.JobIT.controller;
 
+import com.turkraft.springfilter.boot.Filter;
+import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
 import fit.hcmute.JobIT.entity.Company;
 import fit.hcmute.JobIT.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @AllArgsConstructor
+@RequestMapping("/api/v1")
 public class CompanyController {
 
     private final CompanyService companyService;
@@ -22,9 +25,11 @@ public class CompanyController {
     }
 
     @GetMapping("/companies")
-    public ResponseEntity<List<Company>> getAllCompanies() {
-        List<Company> companies = companyService.getAllCompanies();
-        return ResponseEntity.ok(companies);
+    public ResponseEntity<ResultPaginationResponse> getAllCompanies(
+            @Filter Specification<Company> specification,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(companyService.getAllCompanies(specification, pageable));
     }
 
     @PutMapping("/companies")
