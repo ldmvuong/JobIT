@@ -20,6 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * API đăng nhập người dùng.
+ * Nếu username/password hợp lệ, trả về access token và set refresh token vào cookie.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -34,20 +38,18 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
 
-        //Nạp input gồm username/password vào Security
+        // 1. Tạo đối tượng chứa thông tin đăng nhập người dùng (username + password)
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
-        //xác thực người dùng => cần viết hàm loadUserByUsername
 
-        //Nếu xác thực thành công, trả về đối tượng Authentication
-        //AuthenticationManager sẽ sử dụng UserDetailsService để lấy thông tin người dùng
-        //Có thể kế thừa UserDetailsService để lấy thm thông tin người dùng từ cơ sở dữ liệu
+
+        // 2. Gửi thông tin đến AuthenticationManager để xác thực người dùng
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        //Lưu thông tin xác thực vào SecurityContextHolder
+        // 3. Nếu xác thực thành công, lưu thông tin xác thực vào SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        //Trả về response
+        // 4. Lấy thông tin người dùng từ DB để đưa vào response
         LoginResponse loginResponse = new LoginResponse();
         User currentUser = userService.getUserByEmail(loginRequest.getUsername());
 
@@ -57,35 +59,42 @@ public class AuthController {
             loginResponse.setUser(userLoginResponse);
         }
 
+        // 5. Tạo access token (JWT) và gán vào response
         String access_token = securityUtil.createAccessToken(authentication.getName(), loginResponse.getUser());
-
         loginResponse.setAccessToken(access_token);
 
-        // Tạo refresh token và lưu vào cơ sở dữ liệu
+        // 6. Tạo refresh token và lưu vào DB để phục vụ việc làm mới access token sau này
         String refreshToken = securityUtil.createRefreshToken(loginRequest.getUsername(), loginResponse);
         userService.updateUserToken(loginRequest.getUsername(), refreshToken);
 
-        // Set cookie cho refresh token
+        // 7. Gửi refresh token về phía client thông qua HttpOnly Cookie (bảo mật hơn localStorage)
         ResponseCookie responseCookie = ResponseCookie.from("refresh_token", refreshToken)
-                .httpOnly(true)
+                .httpOnly(true) // Không thể đọc bằng JavaScript → tăng bảo mật
                 .secure(true) // Chỉ sử dụng qua HTTPS
-                .path("/") // Đặt đường dẫn cookie
-                .maxAge(jwtProperties.getRefreshTokenExpiration())
+                .path("/") // Cookie có hiệu lực toàn bộ hệ thống
+                .maxAge(jwtProperties.getRefreshTokenExpiration()) // Thời gian sống của cookie
                 .build();
 
+        // 8. Trả về login response kèm cookie
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .body(loginResponse);
     }
 
+    /**
+     * API lấy thông tin người dùng đang đăng nhập (từ access token).
+     */
     @GetMapping("/account")
     @ApiMessage("Get account information")
     public ResponseEntity<LoginResponse.UserLoginResponse> getAccount() {
-        String email = SecurityUtil.getCurrentUserLogin().isPresent() ?
-                SecurityUtil.getCurrentUserLogin().get() : "Anonymous";
 
+        // 1. Lấy email của người dùng từ SecurityContext (nếu đã đăng nhập)
+        String email = SecurityUtil.getCurrentUserLogin().orElse("Anonymous");
+
+        // 2. Truy vấn thông tin người dùng từ DB
         User currentUser = userService.getUserByEmail(email);
 
+        // 3. Chuẩn bị response với thông tin người dùng
         LoginResponse.UserLoginResponse userLogin = new LoginResponse.UserLoginResponse();
         if (currentUser != null) {
             userLogin.setId(currentUser.getId());
@@ -95,20 +104,25 @@ public class AuthController {
         return ResponseEntity.ok().body(userLogin);
     }
 
+
+    /**
+     * API làm mới access token bằng refresh token được lưu trong cookie.
+     * Nếu hợp lệ → tạo mới access token + refresh token, cập nhật DB và cookie.
+     */
     @GetMapping("/refresh")
     @ApiMessage("Get user information from refresh token")
     public ResponseEntity<LoginResponse> getRefreshToken(
             @CookieValue(value = "refresh_token") String refreshToken
     ) {
-        // Kiểm tra xem refresh token có hợp lệ không
-        Jwt decodedToken = securityUtil.checkValidRefreshToken(refreshToken);
-        String email = decodedToken.getSubject();
 
-        // Check User by email + refresh token
+        // 1. Kiểm tra tính hợp lệ của refresh token (giải mã, kiểm tra thời hạn, chữ ký, subject)
+        Jwt decodedToken = securityUtil.checkValidRefreshToken(refreshToken);
+        String email = decodedToken.getSubject(); // Subject là email người dùng
+
+        // 2. Kiểm tra refresh token và email có tồn tại đúng trong DB không
         User currentUser = userService.findByRefreshTokenAndEmail(refreshToken, email);
 
-
-        // issue new token/ set refresh token as cookie
+        // 3. Lấy thông tin người dùng để tạo lại token
         LoginResponse loginResponse = new LoginResponse();
         User currentUserDB = userService.getUserByEmail(email);
 
@@ -120,19 +134,19 @@ public class AuthController {
             loginResponse.setUser(userLoginResponse);
         }
 
+        // 4. Tạo access token mới
         String access_token = securityUtil.createAccessToken(email, loginResponse.getUser());
-
         loginResponse.setAccessToken(access_token);
 
-        // Tạo refresh token và lưu vào cơ sở dữ liệu
+        // 5. Tạo refresh token mới và cập nhật vào DB
         String newRefreshToken = securityUtil.createRefreshToken(email, loginResponse);
         userService.updateUserToken(email, newRefreshToken);
 
-        // Set cookie cho refresh token
+        // 6. Gửi refresh token mới về qua cookie
         ResponseCookie responseCookie = ResponseCookie.from("refresh_token", newRefreshToken)
                 .httpOnly(true)
-                .secure(true) // Chỉ sử dụng qua HTTPS
-                .path("/") // Đặt đường dẫn cookie
+                .secure(true)
+                .path("/")
                 .maxAge(jwtProperties.getRefreshTokenExpiration())
                 .build();
 
@@ -141,21 +155,28 @@ public class AuthController {
                 .body(loginResponse);
     }
 
+    /**
+     * API đăng xuất người dùng:
+     * - Xoá refresh token trong DB.
+     * - Trả cookie rỗng để xoá ở phía client.
+     */
     @GetMapping("/logout")
     @ApiMessage("Logout user and clear refresh token cookie")
     public ResponseEntity<Void> logout() {
 
-        // Xoá refresh token trong cơ sở dữ liệu
+        // 1. Lấy email người dùng hiện tại từ access token (nếu chưa đăng nhập thì ném lỗi)
         String email = SecurityUtil.getCurrentUserLogin().orElseThrow(()
                 -> new IdInvalidException("User not authenticated"));
+
+        // 2. Xoá refresh token trong DB bằng cách set null
         userService.updateUserToken(email, null);
 
-        // Tạo cookie rỗng để xoá cookie refresh_token
+        // 3. Tạo cookie rỗng để trình duyệt xoá cookie refresh_token
         ResponseCookie responseCookie = ResponseCookie.from("refresh_token", "")
                 .httpOnly(true)
-                .secure(true) // Chỉ sử dụng qua HTTPS
-                .path("/") // Đặt đường dẫn cookie
-                .maxAge(0) // Đặt thời gian sống của cookie là 0 để xoá nó
+                .secure(true)
+                .path("/")
+                .maxAge(0) // 0 giây → trình duyệt sẽ xoá ngay cookie này
                 .build();
 
         return ResponseEntity.ok()
