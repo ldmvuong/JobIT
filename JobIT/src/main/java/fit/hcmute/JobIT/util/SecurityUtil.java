@@ -2,7 +2,9 @@ package fit.hcmute.JobIT.util;
 
 import com.nimbusds.jose.util.Base64;
 
-import org.springframework.beans.factory.annotation.Value;
+import fit.hcmute.JobIT.dto.response.LoginResponse;
+import fit.hcmute.JobIT.util.property.JwtProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,52 +18,77 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
-
+@RequiredArgsConstructor
 public class SecurityUtil {
 
     private final JwtEncoder jwtEncoder;
 
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
-    @Value("${jwt.key}")
-    private String jwtKey;
-
-    @Value("${jwt.expiration}")
-    private long jwtExpiration;
-
-    public SecurityUtil(JwtEncoder jwtEncoder) {
-        this.jwtEncoder = jwtEncoder;
-    }
+    private final JwtProperties jwtProperties;
 
     private SecretKey getSecretKey() {
-        byte[] keyBytes = Base64.from(jwtKey).decode();
+        byte[] keyBytes = Base64.from(jwtProperties.getKey()).decode();
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, JWT_ALGORITHM.getName());
     }
 
-
-    public String createToken(Authentication authentication) {
+    public String createAccessToken(String email, LoginResponse.UserLoginResponse user) {
         Instant now = Instant.now();
-        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(jwtProperties.getTokenExpiration(), ChronoUnit.SECONDS);
+
+        List<String> listAuthorities = new ArrayList<>();
+
+        listAuthorities.add("ROLE_USER");
+        listAuthorities.add("ROLE_ADMIN");
 
         // @formatter:off
         //body
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
-                .subject(authentication.getName())
-                .claim("ldmvuong", authentication)
+                .subject(email) // Lưu ý: subject có thể là email hoặc id của người dùng
+                .claim("user", user) // Thêm thông tin người dùng vào claims
+                .claim("permission", listAuthorities) // Thêm quyền của người dùng vào claims
                 .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
-
     }
 
+    public String createRefreshToken(String email, LoginResponse loginResponse) {
+        Instant now = Instant.now();
+        Instant validity = now.plus(jwtProperties.getRefreshTokenExpiration(), ChronoUnit.SECONDS);
+
+        // @formatter:off
+        //body
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuedAt(now)
+                .expiresAt(validity)
+                .subject(email) // Lưu ý: subject có thể là email hoặc id của người dùng
+                .claim("user", loginResponse.getUser())
+                .build();
+
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+    public Jwt checkValidRefreshToken(String token) {
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
+                getSecretKey()).macAlgorithm(SecurityUtil.JWT_ALGORITHM).build();
+            try {
+                return jwtDecoder.decode(token);
+            } catch (Exception e) {
+                System.out.println(">>> Refresh token error: " + e.getMessage());
+                throw e;
+            }
+    }
     /**
      * Get the login of the current user.
      *

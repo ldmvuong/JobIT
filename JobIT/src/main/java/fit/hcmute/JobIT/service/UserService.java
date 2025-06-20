@@ -23,4 +23,8 @@ public interface UserService {
     User getUserByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    void updateUserToken(String email,String token);
+
+    User findByRefreshTokenAndEmail(String refreshToken, String email);
 }

@@ -98,4 +98,25 @@ public class UserServiceImpl implements UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    public void updateUserToken(String email, String token) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            user.setRefreshToken(token);
+            userRepository.save(user);
+        } else {
+            throw new IdInvalidException("User not found with email: " + email);
+        }
+    }
+
+    @Override
+    public User findByRefreshTokenAndEmail(String refreshToken, String email) {
+        User user = userRepository.findByRefreshTokenAndEmail(refreshToken, email);
+       if (user != null) {
+            return user;
+        } else {
+            throw new IdInvalidException("Refresh token or email is invalid.");
+       }
+    }
 }

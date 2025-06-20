@@ -24,6 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("Username or password is incorrect");
         }
 
+        // Có thể custome UserDetails nếu cần thêm thông tin
         return new User(
                 user.getEmail(),
                 user.getPassword(),

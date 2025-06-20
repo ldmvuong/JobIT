@@ -6,6 +6,7 @@ import fit.hcmute.JobIT.entity.Company;
 import fit.hcmute.JobIT.repository.CompanyRepository;
 import fit.hcmute.JobIT.service.CompanyService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,11 +15,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
-
 
     @Override
     public Company createCompany(Company company) {
@@ -43,7 +43,6 @@ public class CompanyServiceImpl implements CompanyService {
 
         return resultPaginationResponse;
     }
-
 
     @Override
     public Company updateCompany(Company company) {
