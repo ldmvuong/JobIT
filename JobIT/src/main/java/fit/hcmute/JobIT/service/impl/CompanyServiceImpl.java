@@ -1,11 +1,9 @@
 package fit.hcmute.JobIT.service.impl;
 
-import fit.hcmute.JobIT.dto.response.Meta;
 import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
 import fit.hcmute.JobIT.entity.Company;
 import fit.hcmute.JobIT.repository.CompanyRepository;
 import fit.hcmute.JobIT.service.CompanyService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +28,7 @@ public class CompanyServiceImpl implements CompanyService {
         Page<Company> pageCompany = companyRepository.findAll(specification,pageable);
 
         ResultPaginationResponse resultPaginationResponse = new ResultPaginationResponse();
-        Meta meta = new Meta();
+        ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
 
         meta.setPage(pageable.getPageNumber() + 1); // Page numbers are 0-based in Spring Data
         meta.setPageSize(pageable.getPageSize());

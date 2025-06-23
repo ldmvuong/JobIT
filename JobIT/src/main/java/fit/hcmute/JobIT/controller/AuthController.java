@@ -86,7 +86,7 @@ public class AuthController {
      */
     @GetMapping("/account")
     @ApiMessage("Get account information")
-    public ResponseEntity<LoginResponse.UserLoginResponse> getAccount() {
+    public ResponseEntity<LoginResponse.UserGetAccount> getAccount() {
 
         // 1. Lấy email của người dùng từ SecurityContext (nếu đã đăng nhập)
         String email = SecurityUtil.getCurrentUserLogin().orElse("Anonymous");
@@ -96,12 +96,14 @@ public class AuthController {
 
         // 3. Chuẩn bị response với thông tin người dùng
         LoginResponse.UserLoginResponse userLogin = new LoginResponse.UserLoginResponse();
+        LoginResponse.UserGetAccount userGetAccount = new LoginResponse.UserGetAccount();
         if (currentUser != null) {
             userLogin.setId(currentUser.getId());
             userLogin.setName(currentUser.getName());
             userLogin.setEmail(currentUser.getEmail());
+            userGetAccount.setUser(userLogin);
         }
-        return ResponseEntity.ok().body(userLogin);
+        return ResponseEntity.ok().body(userGetAccount);
     }
 
 

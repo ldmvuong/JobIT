@@ -1,10 +1,13 @@
 package fit.hcmute.JobIT.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
 @Setter
 public class LoginResponse {
+
+    @JsonProperty("access_token")
     private String accessToken;
     private UserLoginResponse user;
 
@@ -16,5 +19,13 @@ public class LoginResponse {
         private Long id;
         private String name;
         private String email;
+    }
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserGetAccount {
+        private UserLoginResponse user;
     }
 }

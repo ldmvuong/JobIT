@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     public ResultPaginationResponse getAllUsers(Specification<User> specification, Pageable pageable) {
         Page<User> pageUser = userRepository.findAll(specification, pageable);
         ResultPaginationResponse resultPaginationResponse = new ResultPaginationResponse();
-        Meta meta = new Meta();
+        ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
 
         meta.setPage(pageUser.getNumber() + 1); // Page numbers are 0-based in Spring Data
         meta.setPageSize(pageUser.getSize());
