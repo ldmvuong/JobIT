@@ -10,9 +10,6 @@ import lombok.Setter;
 
 import java.time.Instant;
 
-import static fit.hcmute.JobIT.enums.EGender.MALE;
-
-
 @Entity
 @Setter
 @Getter

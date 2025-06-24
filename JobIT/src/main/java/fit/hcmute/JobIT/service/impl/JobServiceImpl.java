@@ -2,8 +2,12 @@ package fit.hcmute.JobIT.service.impl;
 
 import fit.hcmute.JobIT.converter.JobMapper;
 import fit.hcmute.JobIT.dto.request.JobRequest;
+import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
+import fit.hcmute.JobIT.dto.response.company.CompanyResponse;
 import fit.hcmute.JobIT.dto.response.job.CreateJobResponse;
+import fit.hcmute.JobIT.dto.response.job.JobResponse;
 import fit.hcmute.JobIT.dto.response.job.UpdateJobResponse;
+import fit.hcmute.JobIT.entity.Company;
 import fit.hcmute.JobIT.entity.Job;
 import fit.hcmute.JobIT.entity.Skill;
 import fit.hcmute.JobIT.exception.IdInvalidException;
@@ -11,6 +15,9 @@ import fit.hcmute.JobIT.repository.JobRepository;
 import fit.hcmute.JobIT.repository.SkillRepository;
 import fit.hcmute.JobIT.service.JobService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -23,6 +30,19 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
     private final SkillRepository skillRepository;
     private final JobMapper jobMapper;
+
+    @Override
+    public JobResponse getJobById(Long id) {
+        if (id == null) {
+            throw new IdInvalidException("Job ID must not be null");
+        }
+
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new IdInvalidException("Job not found with id: " + id));
+
+        return jobMapper.toJobResponse(job);
+
+    }
 
     @Override
     public CreateJobResponse createJob(JobRequest jobRequest) {
@@ -73,5 +93,27 @@ public class JobServiceImpl implements JobService {
             throw new IdInvalidException("Job not found with id: " + id);
         }
         jobRepository.deleteById(id);
+    }
+
+    @Override
+    public ResultPaginationResponse getAllJob(Specification<Job> specification, Pageable pageable) {
+        Page<Job> pageJob = jobRepository.findAll(specification, pageable);
+
+        List<JobResponse> jobResponses = pageJob
+                .getContent()
+                .stream()
+                .map(jobMapper::toJobResponse)
+                .toList();
+
+        ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(pageJob.getTotalPages());
+        meta.setTotal(pageJob.getTotalElements());
+
+        ResultPaginationResponse response = new ResultPaginationResponse();
+        response.setMeta(meta);
+        response.setResult(jobResponses);
+        return response;
     }
 }

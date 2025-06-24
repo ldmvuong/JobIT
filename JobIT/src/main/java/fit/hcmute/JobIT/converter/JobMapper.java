@@ -2,6 +2,7 @@ package fit.hcmute.JobIT.converter;
 
 import fit.hcmute.JobIT.dto.request.JobRequest;
 import fit.hcmute.JobIT.dto.response.job.CreateJobResponse;
+import fit.hcmute.JobIT.dto.response.job.JobResponse;
 import fit.hcmute.JobIT.dto.response.job.UpdateJobResponse;
 import fit.hcmute.JobIT.entity.Job;
 import fit.hcmute.JobIT.entity.Skill;
@@ -21,6 +22,11 @@ public interface JobMapper {
     // Từ Job → UpdateJobResponse
     @Mapping(target = "skills", source = "skills")
     UpdateJobResponse toUpdateResponse(Job job);
+
+    // Từ Job → JobResponse
+    @Mapping(target = "skills", source = "skills")
+    @Mapping(target = "company", source = "company")
+    JobResponse toJobResponse(Job job);
 
     @Mapping(target = "skills", ignore = true) // cập nhật thủ công
     void updateFromRequest(JobRequest request, @MappingTarget Job job);
