@@ -1,4 +1,4 @@
-package fit.hcmute.JobIT.dto.response;
+package fit.hcmute.JobIT.dto.response.user;
 
 import fit.hcmute.JobIT.enums.EGender;
 import lombok.AllArgsConstructor;
@@ -21,4 +21,12 @@ public class UserResponse {
     private int age;
     private Instant createdAt;
     private Instant updatedAt;
+    private CompanyUser company;
+
+    @Getter
+    @Setter
+    public static class CompanyUser {
+        private Long id;
+        private String name;
+    }
 }

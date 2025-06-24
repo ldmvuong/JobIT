@@ -1,4 +1,4 @@
-package fit.hcmute.JobIT.dto.response;
+package fit.hcmute.JobIT.dto.response.user;
 
 import fit.hcmute.JobIT.enums.EGender;
 import lombok.Getter;
@@ -15,4 +15,12 @@ public class UpdateUserResponse {
     private String address;
     private int age;
     private Instant updatedAt;
+    private CompanyUser company;
+
+    @Getter
+    @Setter
+    public static class CompanyUser {
+        private Long id;
+        private String name;
+    }
 }

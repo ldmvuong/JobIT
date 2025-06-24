@@ -5,9 +5,11 @@ import fit.hcmute.JobIT.entity.Company;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface CompanyService {
+
+    Optional<Company> findById(long id);
 
     Company createCompany(Company company);
 
@@ -16,5 +18,4 @@ public interface CompanyService {
     Company updateCompany(Company company);
 
     void deleteCompany(Long id);
-
 }

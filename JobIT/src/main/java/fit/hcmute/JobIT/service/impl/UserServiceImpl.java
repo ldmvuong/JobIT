@@ -2,11 +2,16 @@ package fit.hcmute.JobIT.service.impl;
 
 import fit.hcmute.JobIT.converter.UserMapper;
 import fit.hcmute.JobIT.dto.response.*;
+import fit.hcmute.JobIT.dto.response.user.CreateUserResponse;
+import fit.hcmute.JobIT.dto.response.user.UpdateUserResponse;
+import fit.hcmute.JobIT.dto.response.user.UserResponse;
+import fit.hcmute.JobIT.entity.Company;
 import fit.hcmute.JobIT.entity.User;
 import fit.hcmute.JobIT.exception.IdInvalidException;
 import fit.hcmute.JobIT.repository.UserRepository;
+import fit.hcmute.JobIT.service.CompanyService;
 import fit.hcmute.JobIT.service.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,21 +19,29 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+
 
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CompanyService companyService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public CreateUserResponse createUser(User user) {
+
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IdInvalidException("Email already exists: " + user.getEmail() + ". Please use a different email.");
+        }
+
+        if (user.getCompany() != null) {
+            Optional<Company> companyOptional = companyService.findById(user.getCompany().getId());
+            user.setCompany(companyOptional.orElse(null));
         }
 
         String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -48,6 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultPaginationResponse getAllUsers(Specification<User> specification, Pageable pageable) {
         Page<User> pageUser = userRepository.findAll(specification, pageable);
+
         ResultPaginationResponse resultPaginationResponse = new ResultPaginationResponse();
         ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
 
@@ -56,7 +70,11 @@ public class UserServiceImpl implements UserService {
         meta.setPages(pageUser.getTotalPages());
         meta.setTotal(pageUser.getTotalElements());
 
-        List<UserResponse> userResponses = pageUser.getContent().stream().map(userMapper::toUserResponse).toList();
+        List<UserResponse> userResponses = pageUser
+                .getContent()
+                .stream()
+                .map(userMapper::toUserResponse)
+                .toList();
 
         resultPaginationResponse.setMeta(meta);
         resultPaginationResponse.setResult(userResponses);
@@ -74,6 +92,11 @@ public class UserServiceImpl implements UserService {
         userCurrent.setGender(user.getGender());
         userCurrent.setAddress(user.getAddress());
         userCurrent.setAge(user.getAge());
+
+        if (user.getCompany() != null) {
+            Optional<Company> companyOptional = companyService.findById(user.getCompany().getId());
+            userCurrent.setCompany(companyOptional.orElse(null));
+        }
 
         User updatedUser = userRepository.save(userCurrent);
 
@@ -113,10 +136,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByRefreshTokenAndEmail(String refreshToken, String email) {
         User user = userRepository.findByRefreshTokenAndEmail(refreshToken, email);
-       if (user != null) {
+        if (user != null) {
             return user;
         } else {
             throw new IdInvalidException("Refresh token or email is invalid.");
-       }
+        }
     }
 }

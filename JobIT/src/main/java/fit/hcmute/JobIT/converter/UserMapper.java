@@ -1,9 +1,9 @@
 package fit.hcmute.JobIT.converter;
 
 
-import fit.hcmute.JobIT.dto.response.CreateUserResponse;
-import fit.hcmute.JobIT.dto.response.UpdateUserResponse;
-import fit.hcmute.JobIT.dto.response.UserResponse;
+import fit.hcmute.JobIT.dto.response.user.CreateUserResponse;
+import fit.hcmute.JobIT.dto.response.user.UpdateUserResponse;
+import fit.hcmute.JobIT.dto.response.user.UserResponse;
 import fit.hcmute.JobIT.entity.User;
 import org.mapstruct.Mapper;
 

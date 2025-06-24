@@ -1,50 +1,52 @@
 package fit.hcmute.JobIT.entity;
 
-import fit.hcmute.JobIT.enums.EGender;
+import fit.hcmute.JobIT.enums.ELevel;
 import fit.hcmute.JobIT.util.SecurityUtil;
-import fit.hcmute.JobIT.util.annotation.enumvalidate.subnet.EnumSubset;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-
-import static fit.hcmute.JobIT.enums.EGender.MALE;
-
+import java.util.List;
 
 @Entity
-@Setter
+@Table(name = "jobs")
 @Getter
-@Table(name = "users")
-public class User {
+@Setter
+public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
 
-    @NotBlank(message = "Email is required")
-    private String email;
-    @NotBlank(message = "Username is required")
-    private String password;
-    private int age;
+    private String name;
+    private String location;
+    private double salary;
+    private int quantity;
 
     @Enumerated(EnumType.STRING)
-    @EnumSubset(enumClass = EGender.class, anyOf = {"MALE", "FEMALE"})
-    private EGender gender;
-    private String address;
+    private ELevel level;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String description;
+
+    private Instant startDate;
+    private Instant endDate;
+    private boolean active;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private String createdBy;
+    private String updatedBy;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String refreshToken;
-
-    private Instant createdAt;
-    private Instant updatedAt;
-    private String createdBy;
-    private String updatedBy;
+    // Job là chủ nhờ Join Table, tự động quản lý quan hệ nhiều-nhiều với Skill
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "job_skill",
+            joinColumns = @JoinColumn(name = "job_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private List<Skill> skills;
 
     @PrePersist
     public void prePersist() {

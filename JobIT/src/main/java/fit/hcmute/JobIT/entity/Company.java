@@ -1,17 +1,18 @@
 package fit.hcmute.JobIT.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import fit.hcmute.JobIT.util.SecurityUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "companys")
+@Table(name = "companies")
 public class Company {
 
     @Id
@@ -27,14 +28,16 @@ public class Company {
 
     private String logo;
 
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    List<User> users;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    List<Job> jobs;
+
+
     private Instant createdAt;
-
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
-
     private String createdBy;
-
     private String updatedBy;
 
     @PrePersist

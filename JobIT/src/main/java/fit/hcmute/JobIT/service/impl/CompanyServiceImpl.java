@@ -1,8 +1,13 @@
 package fit.hcmute.JobIT.service.impl;
 
+import fit.hcmute.JobIT.converter.CompanyMapper;
+import fit.hcmute.JobIT.dto.response.company.CompanyResponse;
 import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
 import fit.hcmute.JobIT.entity.Company;
+import fit.hcmute.JobIT.entity.User;
+import fit.hcmute.JobIT.exception.IdInvalidException;
 import fit.hcmute.JobIT.repository.CompanyRepository;
+import fit.hcmute.JobIT.repository.UserRepository;
 import fit.hcmute.JobIT.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +23,14 @@ import java.util.Optional;
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
+    private final CompanyMapper companyMapper;
+
+
+    @Override
+    public Optional<Company> findById(long id) {
+        return companyRepository.findById(id);
+    }
 
     @Override
     public Company createCompany(Company company) {
@@ -25,22 +39,27 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public ResultPaginationResponse getAllCompanies(Specification<Company> specification, Pageable pageable) {
-        Page<Company> pageCompany = companyRepository.findAll(specification,pageable);
+        Page<Company> pageCompany = companyRepository.findAll(specification, pageable);
 
-        ResultPaginationResponse resultPaginationResponse = new ResultPaginationResponse();
+        List<CompanyResponse> companyResponses = pageCompany
+                .getContent()
+                .stream()
+                .map(companyMapper::toCompanyResponse)
+                .toList();
+
         ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
-
-        meta.setPage(pageable.getPageNumber() + 1); // Page numbers are 0-based in Spring Data
+        meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
-
         meta.setPages(pageCompany.getTotalPages());
         meta.setTotal(pageCompany.getTotalElements());
 
-        resultPaginationResponse.setMeta(meta);
-        resultPaginationResponse.setResult(pageCompany.getContent());
+        ResultPaginationResponse response = new ResultPaginationResponse();
+        response.setMeta(meta);
+        response.setResult(companyResponses);
 
-        return resultPaginationResponse;
+        return response;
     }
+
 
     @Override
     public Company updateCompany(Company company) {
@@ -57,6 +76,13 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void deleteCompany(Long id) {
-        companyRepository.deleteById(id);
+        Optional<Company> companyOptional = companyRepository.findById(id);
+        if (companyOptional.isEmpty()) {
+            throw new IdInvalidException("Company not found with ID: " + id);
+        } else {
+            List<User> users = companyOptional.get().getUsers();
+            userRepository.deleteAll(users);
+            companyRepository.deleteById(id);
+        }
     }
 }

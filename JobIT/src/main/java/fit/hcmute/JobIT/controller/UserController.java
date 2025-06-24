@@ -1,10 +1,10 @@
 package fit.hcmute.JobIT.controller;
 
 import com.turkraft.springfilter.boot.Filter;
-import fit.hcmute.JobIT.dto.response.CreateUserResponse;
+import fit.hcmute.JobIT.dto.response.user.CreateUserResponse;
 import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
-import fit.hcmute.JobIT.dto.response.UpdateUserResponse;
-import fit.hcmute.JobIT.dto.response.UserResponse;
+import fit.hcmute.JobIT.dto.response.user.UpdateUserResponse;
+import fit.hcmute.JobIT.dto.response.user.UserResponse;
 import fit.hcmute.JobIT.entity.User;
 import fit.hcmute.JobIT.service.UserService;
 import fit.hcmute.JobIT.util.annotation.ApiMessage;
