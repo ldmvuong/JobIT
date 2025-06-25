@@ -3,7 +3,8 @@ package fit.hcmute.JobIT.config;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 import fit.hcmute.JobIT.util.SecurityUtil;
-import org.springframework.beans.factory.annotation.Value;
+import fit.hcmute.JobIT.util.property.JwtProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -27,10 +28,10 @@ import static fit.hcmute.JobIT.util.SecurityUtil.JWT_ALGORITHM;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${jwt.key}")
-    private String jwtKey;
+    private final JwtProperties jwtProperties;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -38,7 +39,7 @@ public class SecurityConfig {
     }
 
     private SecretKey getSecretKey() {
-        byte[] keyBytes = Base64.from(jwtKey).decode();
+        byte[] keyBytes = Base64.from(jwtProperties.getKey()).decode();
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, JWT_ALGORITHM.getName());
     }
 
@@ -73,8 +74,6 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
-
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
