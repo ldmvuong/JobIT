@@ -1,51 +1,40 @@
 package fit.hcmute.JobIT.entity;
 
-import fit.hcmute.JobIT.enums.EGender;
+import fit.hcmute.JobIT.enums.EResumeStatus;
 import fit.hcmute.JobIT.util.SecurityUtil;
-import fit.hcmute.JobIT.util.annotation.enumvalidate.subnet.EnumSubset;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.List;
 
 @Entity
-@Setter
+@Table(name = "resumes")
 @Getter
-@Table(name = "users")
-public class User {
+@Setter
+public class Resume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
 
-    @NotBlank(message = "Email is required")
     private String email;
-    @NotBlank(message = "Username is required")
-    private String password;
-    private int age;
+    private String url;
 
     @Enumerated(EnumType.STRING)
-    @EnumSubset(enumClass = EGender.class, anyOf = {"MALE", "FEMALE"})
-    private EGender gender;
-    private String address;
-
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
-
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String refreshToken;
+    private EResumeStatus status;
 
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Resume> resumes;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "job_id")
+    private Job job;
 
     @PrePersist
     public void prePersist() {
