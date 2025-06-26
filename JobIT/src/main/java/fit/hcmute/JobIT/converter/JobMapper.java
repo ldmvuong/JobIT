@@ -12,6 +12,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface JobMapper {
+
     @Mapping(target = "skills", ignore = true) // xử lý thủ công do chỉ truyền id
     Job toEntity(JobRequest jobRequest);
 

@@ -1,5 +1,6 @@
 package fit.hcmute.JobIT.dto.response.job;
 
+import fit.hcmute.JobIT.dto.response.company.CompanyResponse;
 import fit.hcmute.JobIT.dto.response.skill.SkillResponse;
 import fit.hcmute.JobIT.entity.Company;
 import fit.hcmute.JobIT.entity.Skill;
@@ -29,6 +30,6 @@ public class JobResponse {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
-    private Company company;
+    private CompanyResponse company;
     private List<SkillResponse> skills;
 }

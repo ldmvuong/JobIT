@@ -33,6 +33,18 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public CompanyResponse getCompanyById(Long id) {
+        if (id == null) {
+            throw new IdInvalidException("Company ID must not be null");
+        }
+
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new IdInvalidException("Company not found with id: " + id));
+
+        return companyMapper.toCompanyResponse(company);
+    }
+
+    @Override
     public Company createCompany(Company company) {
         return companyRepository.save(company);
     }

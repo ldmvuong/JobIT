@@ -12,7 +12,6 @@ import java.util.List;
 
 
 @Getter
-@Setter
 public class JobRequest {
     private Long id;
     private String name;
