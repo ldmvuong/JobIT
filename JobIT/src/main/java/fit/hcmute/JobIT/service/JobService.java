@@ -1,6 +1,6 @@
 package fit.hcmute.JobIT.service;
 
-import fit.hcmute.JobIT.dto.request.JobRequest;
+import fit.hcmute.JobIT.dto.request.job.JobRequest;
 import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
 import fit.hcmute.JobIT.dto.response.job.CreateJobResponse;
 import fit.hcmute.JobIT.dto.response.job.JobResponse;

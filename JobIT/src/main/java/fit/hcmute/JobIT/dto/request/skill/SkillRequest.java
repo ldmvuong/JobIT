@@ -1,8 +1,7 @@
-package fit.hcmute.JobIT.dto.request;
+package fit.hcmute.JobIT.dto.request.skill;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class SkillRequest {

@@ -1,4 +1,4 @@
-package fit.hcmute.JobIT.dto.request;
+package fit.hcmute.JobIT.dto.request.job;
 
 
 import fit.hcmute.JobIT.enums.ELevel;

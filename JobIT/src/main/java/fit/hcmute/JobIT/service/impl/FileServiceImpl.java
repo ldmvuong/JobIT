@@ -1,6 +1,6 @@
 package fit.hcmute.JobIT.service.impl;
 
-import fit.hcmute.JobIT.service.FileService;
+import fit.hcmute.JobIT.service.IFileService;
 import fit.hcmute.JobIT.util.property.FileProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -17,7 +17,7 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 @RequiredArgsConstructor
-public class FileServiceImpl implements FileService {
+public class FileServiceImpl implements IFileService {
 
     private final FileProperties fileProperties;
 

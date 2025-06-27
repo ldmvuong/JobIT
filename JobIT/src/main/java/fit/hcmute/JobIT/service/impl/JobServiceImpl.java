@@ -1,13 +1,11 @@
 package fit.hcmute.JobIT.service.impl;
 
 import fit.hcmute.JobIT.converter.JobMapper;
-import fit.hcmute.JobIT.dto.request.JobRequest;
+import fit.hcmute.JobIT.dto.request.job.JobRequest;
 import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
-import fit.hcmute.JobIT.dto.response.company.CompanyResponse;
 import fit.hcmute.JobIT.dto.response.job.CreateJobResponse;
 import fit.hcmute.JobIT.dto.response.job.JobResponse;
 import fit.hcmute.JobIT.dto.response.job.UpdateJobResponse;
-import fit.hcmute.JobIT.entity.Company;
 import fit.hcmute.JobIT.entity.Job;
 import fit.hcmute.JobIT.entity.Skill;
 import fit.hcmute.JobIT.exception.IdInvalidException;

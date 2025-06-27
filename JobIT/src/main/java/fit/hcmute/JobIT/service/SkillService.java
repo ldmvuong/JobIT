@@ -1,6 +1,6 @@
 package fit.hcmute.JobIT.service;
 
-import fit.hcmute.JobIT.dto.request.SkillRequest;
+import fit.hcmute.JobIT.dto.request.skill.SkillRequest;
 import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
 import fit.hcmute.JobIT.dto.response.skill.SkillResponse;
 import fit.hcmute.JobIT.entity.Skill;

@@ -1,6 +1,6 @@
 package fit.hcmute.JobIT.controller;
 
-import fit.hcmute.JobIT.dto.request.LoginRequest;
+import fit.hcmute.JobIT.dto.request.user.LoginRequest;
 import fit.hcmute.JobIT.dto.response.LoginResponse;
 import fit.hcmute.JobIT.entity.User;
 import fit.hcmute.JobIT.exception.IdInvalidException;

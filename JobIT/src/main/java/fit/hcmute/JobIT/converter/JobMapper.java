@@ -1,6 +1,6 @@
 package fit.hcmute.JobIT.converter;
 
-import fit.hcmute.JobIT.dto.request.JobRequest;
+import fit.hcmute.JobIT.dto.request.job.JobRequest;
 import fit.hcmute.JobIT.dto.response.job.CreateJobResponse;
 import fit.hcmute.JobIT.dto.response.job.JobResponse;
 import fit.hcmute.JobIT.dto.response.job.UpdateJobResponse;

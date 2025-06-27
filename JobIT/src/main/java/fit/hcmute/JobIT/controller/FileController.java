@@ -2,7 +2,7 @@ package fit.hcmute.JobIT.controller;
 
 import fit.hcmute.JobIT.dto.response.file.UploadFileResponse;
 import fit.hcmute.JobIT.exception.StorageException;
-import fit.hcmute.JobIT.service.FileService;
+import fit.hcmute.JobIT.service.IFileService;
 import fit.hcmute.JobIT.util.annotation.ApiMessage;
 import fit.hcmute.JobIT.util.property.FileProperties;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileController {
 
-    private final FileService fileService;
+    private final IFileService fileService;
 
     private final FileProperties fileProperties;
 
