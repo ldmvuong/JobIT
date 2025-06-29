@@ -12,5 +12,7 @@ public interface PermissionService {
     PermissionResponse createPermission(CreatePermissionRequest createPermissionRequest);
     PermissionResponse updatePermission(UpdatePermissionRequest updatePermissionRequest);
     ResultPaginationResponse getAllPermissions(Specification<Permission> specification, Pageable pageable);
+    PermissionResponse getPermissionById(Long id);
+    void deletePermission(Long id);
 
 }

@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -75,5 +76,25 @@ public class PermissionServiceImpl implements PermissionService {
         response.setMeta(meta);
 
         return response;
+    }
+
+    @Override
+    public PermissionResponse getPermissionById(Long id) {
+        Optional<Permission> permissionOptional = permissionRepository.findById(id);
+        return permissionOptional.map(permissionMapper::toPermissionResponse).orElse(null);
+    }
+
+    @Override
+    public void deletePermission(Long id) {
+        Optional<Permission> permissionOptional = permissionRepository.findById(id);
+        if (permissionOptional.isEmpty()) {
+            throw new IdInvalidException("Permission not found");
+        }
+
+        Permission permission = permissionOptional.get();
+
+        permission.getRoles().forEach(role -> role.getPermissions().remove(permission));
+
+        permissionRepository.deleteById(id);
     }
 }

@@ -1,17 +1,20 @@
 package fit.hcmute.JobIT.controller;
 
+import com.turkraft.springfilter.boot.Filter;
 import fit.hcmute.JobIT.dto.request.role.CreateRoleRequest;
+import fit.hcmute.JobIT.dto.request.role.UpdateRoleRequest;
+import fit.hcmute.JobIT.dto.response.ResultPaginationResponse;
 import fit.hcmute.JobIT.dto.response.role.RoleResponse;
+import fit.hcmute.JobIT.entity.Role;
 import fit.hcmute.JobIT.service.RoleService;
 import fit.hcmute.JobIT.util.annotation.ApiMessage;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/roles")
@@ -24,5 +27,28 @@ public class RoleController {
     public ResponseEntity<RoleResponse> createRole(@Valid @RequestBody CreateRoleRequest createRoleRequest) {
         RoleResponse roleResponse = roleService.createRole(createRoleRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(roleResponse);
+    }
+
+    @PutMapping
+    @ApiMessage("Update an existing role")
+    public ResponseEntity<RoleResponse> updateRole(@Valid @RequestBody UpdateRoleRequest updateRoleRequest) {
+        RoleResponse roleResponse = roleService.updateRole(updateRoleRequest);
+        return ResponseEntity.ok(roleResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    @ApiMessage("Delete a role by ID")
+    public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
+        roleService.deleteRole(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    @ApiMessage("Get all roles")
+    public ResponseEntity<ResultPaginationResponse> getAllRoles(
+            @Filter Specification<Role> specification,
+            Pageable pageable) {
+        ResultPaginationResponse result = roleService.getAllRoles(specification, pageable);
+        return ResponseEntity.ok(result);
     }
 }

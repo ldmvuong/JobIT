@@ -40,4 +40,17 @@ public class PermissionController {
             Pageable pageable) {
         return ResponseEntity.ok(permissionService.getAllPermissions(specification, pageable));
     }
+
+    @GetMapping("/{id}")
+    @ApiMessage("Lấy quyền truy cập API theo ID")
+    public ResponseEntity<PermissionResponse> getPermissionById(@PathVariable Long id) {
+        return ResponseEntity.ok(permissionService.getPermissionById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    @ApiMessage("Xoá quyền truy cập API theo ID")
+    public ResponseEntity<Void> deletePermission(@PathVariable Long id) {
+        permissionService.deletePermission(id);
+        return ResponseEntity.ok().build();
+    }
 }
