@@ -6,10 +6,12 @@ import fit.hcmute.JobIT.dto.response.user.CreateUserResponse;
 import fit.hcmute.JobIT.dto.response.user.UpdateUserResponse;
 import fit.hcmute.JobIT.dto.response.user.UserResponse;
 import fit.hcmute.JobIT.entity.Company;
+import fit.hcmute.JobIT.entity.Role;
 import fit.hcmute.JobIT.entity.User;
 import fit.hcmute.JobIT.exception.IdInvalidException;
 import fit.hcmute.JobIT.repository.UserRepository;
 import fit.hcmute.JobIT.service.CompanyService;
+import fit.hcmute.JobIT.service.RoleService;
 import fit.hcmute.JobIT.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final CompanyService companyService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Override
     public CreateUserResponse createUser(User user) {
@@ -42,6 +45,11 @@ public class UserServiceImpl implements UserService {
         if (user.getCompany() != null) {
             Optional<Company> companyOptional = companyService.findById(user.getCompany().getId());
             user.setCompany(companyOptional.orElse(null));
+        }
+
+        if (user.getRole() != null) {
+            Role role = roleService.getRoleById(user.getRole().getId());
+            user.setRole(role);
         }
 
         String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -96,6 +104,11 @@ public class UserServiceImpl implements UserService {
         if (user.getCompany() != null) {
             Optional<Company> companyOptional = companyService.findById(user.getCompany().getId());
             userCurrent.setCompany(companyOptional.orElse(null));
+        }
+
+        if (user.getRole() != null) {
+            Role role = roleService.getRoleById(user.getRole().getId());
+            userCurrent.setRole(role);
         }
 
         User updatedUser = userRepository.save(userCurrent);

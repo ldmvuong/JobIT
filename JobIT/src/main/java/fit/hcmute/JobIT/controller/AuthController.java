@@ -2,6 +2,7 @@ package fit.hcmute.JobIT.controller;
 
 import fit.hcmute.JobIT.dto.request.user.LoginRequest;
 import fit.hcmute.JobIT.dto.response.LoginResponse;
+import fit.hcmute.JobIT.dto.response.user.CreateUserResponse;
 import fit.hcmute.JobIT.entity.User;
 import fit.hcmute.JobIT.exception.IdInvalidException;
 import fit.hcmute.JobIT.service.UserService;
@@ -54,13 +55,16 @@ public class AuthController {
         User currentUser = userService.getUserByEmail(loginRequest.getUsername());
 
         if (currentUser != null) {
-            LoginResponse.UserLoginResponse userLoginResponse = new LoginResponse.UserLoginResponse(currentUser.getId(),
-                    currentUser.getName(), currentUser.getEmail());
+            LoginResponse.UserLoginResponse userLoginResponse = new LoginResponse.UserLoginResponse(
+                    currentUser.getId(),
+                    currentUser.getName(),
+                    currentUser.getEmail(),
+                    currentUser.getRole());
             loginResponse.setUser(userLoginResponse);
         }
 
         // 5. Tạo access token (JWT) và gán vào response
-        String access_token = securityUtil.createAccessToken(authentication.getName(), loginResponse.getUser());
+        String access_token = securityUtil.createAccessToken(authentication.getName(), loginResponse);
         loginResponse.setAccessToken(access_token);
 
         // 6. Tạo refresh token và lưu vào DB để phục vụ việc làm mới access token sau này
@@ -101,6 +105,7 @@ public class AuthController {
             userLogin.setId(currentUser.getId());
             userLogin.setName(currentUser.getName());
             userLogin.setEmail(currentUser.getEmail());
+            userLogin.setRole(currentUser.getRole());
             userGetAccount.setUser(userLogin);
         }
         return ResponseEntity.ok().body(userGetAccount);
@@ -132,12 +137,13 @@ public class AuthController {
             LoginResponse.UserLoginResponse userLoginResponse = new LoginResponse.UserLoginResponse(
                     currentUserDB.getId(),
                     currentUserDB.getName(),
-                    currentUserDB.getEmail());
+                    currentUserDB.getEmail(),
+                    currentUserDB.getRole());
             loginResponse.setUser(userLoginResponse);
         }
 
         // 4. Tạo access token mới
-        String access_token = securityUtil.createAccessToken(email, loginResponse.getUser());
+        String access_token = securityUtil.createAccessToken(email, loginResponse);
         loginResponse.setAccessToken(access_token);
 
         // 5. Tạo refresh token mới và cập nhật vào DB
@@ -184,5 +190,16 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .build();
+    }
+
+    @PostMapping("/register")
+    @ApiMessage("Register a new user")
+    public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody User user) {
+
+
+        // Tạo mới người dùng
+        CreateUserResponse response = userService.createUser(user);
+
+        return ResponseEntity.ok(response);
     }
 }

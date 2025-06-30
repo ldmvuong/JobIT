@@ -30,6 +30,7 @@ public class RoleServiceImpl implements RoleService {
     private final RoleMapper roleMapper;
 
     public RoleResponse createRole(CreateRoleRequest request) {
+
         if (roleRepository.existsByName(request.getName())) {
             throw new IdInvalidException("Role with name " + request.getName() + " already exists");
         }
@@ -99,5 +100,11 @@ public class RoleServiceImpl implements RoleService {
         response.setMeta(meta);
 
         return response;
+    }
+
+    @Override
+    public Role getRoleById(Long id) {
+        return roleRepository.findById(id)
+                .orElse(null);
     }
 }

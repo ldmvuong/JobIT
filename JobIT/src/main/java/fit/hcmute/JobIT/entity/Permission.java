@@ -1,5 +1,6 @@
 package fit.hcmute.JobIT.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
@@ -20,5 +21,6 @@ public class Permission extends AbstractEntity{
     private String module;
 
     @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Role> roles;
 }

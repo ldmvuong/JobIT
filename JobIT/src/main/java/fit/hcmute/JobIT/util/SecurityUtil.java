@@ -39,7 +39,14 @@ public class SecurityUtil {
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, JWT_ALGORITHM.getName());
     }
 
-    public String createAccessToken(String email, LoginResponse.UserLoginResponse user) {
+    public String createAccessToken(String email, LoginResponse user) {
+
+        LoginResponse.UserInsideToken userInsideToken = new LoginResponse.UserInsideToken(
+                user.getUser().getId(),
+                user.getUser().getName(),
+                user.getUser().getEmail()
+        );
+
         Instant now = Instant.now();
         Instant validity = now.plus(jwtProperties.getTokenExpiration(), ChronoUnit.SECONDS);
 
@@ -54,7 +61,7 @@ public class SecurityUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email) // Lưu ý: subject có thể là email hoặc id của người dùng
-                .claim("user", user) // Thêm thông tin người dùng vào claims
+                .claim("user", userInsideToken) // Thêm thông tin người dùng vào claims
                 .claim("permission", listAuthorities) // Thêm quyền của người dùng vào claims
                 .build();
 
@@ -66,13 +73,19 @@ public class SecurityUtil {
         Instant now = Instant.now();
         Instant validity = now.plus(jwtProperties.getRefreshTokenExpiration(), ChronoUnit.SECONDS);
 
+        LoginResponse.UserInsideToken userInsideToken = new LoginResponse.UserInsideToken(
+                loginResponse.getUser().getId(),
+                loginResponse.getUser().getName(),
+                loginResponse.getUser().getEmail()
+        );
+
         // @formatter:off
         //body
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email) // Lưu ý: subject có thể là email hoặc id của người dùng
-                .claim("user", loginResponse.getUser())
+                .claim("user", userInsideToken)
                 .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

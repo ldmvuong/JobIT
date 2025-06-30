@@ -1,5 +1,8 @@
 package fit.hcmute.JobIT.service.impl;
 
+import com.turkraft.springfilter.converter.FilterSpecificationConverter;
+import com.turkraft.springfilter.parser.FilterParser;
+import com.turkraft.springfilter.parser.node.FilterNode;
 import fit.hcmute.JobIT.converter.ResumeMapper;
 import fit.hcmute.JobIT.dto.request.resume.CreateResumeRequest;
 import fit.hcmute.JobIT.dto.request.resume.UpdateResumeRequest;
@@ -16,12 +19,14 @@ import fit.hcmute.JobIT.repository.JobRepository;
 import fit.hcmute.JobIT.repository.ResumeRepository;
 import fit.hcmute.JobIT.repository.UserRepository;
 import fit.hcmute.JobIT.service.ResumeService;
+import fit.hcmute.JobIT.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +37,8 @@ public class ResumeServiceImpl implements ResumeService {
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
     private final ResumeMapper resumeMapper;
+    private final FilterParser filterParser;
+    private final FilterSpecificationConverter filterSpecificationConverter;
 
     @Override
     public CreateResumeResponse createResume(CreateResumeRequest request) {
@@ -111,5 +118,33 @@ public class ResumeServiceImpl implements ResumeService {
         result.setResult(resumeResponses);
 
         return result;
+    }
+
+    @Override
+    public ResultPaginationResponse getAllResumesByUser(Pageable pageable) {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
+
+        FilterNode node = filterParser.parse("email='" + email + "'");
+        Specification<Resume> specification = filterSpecificationConverter.convert(node);
+
+        Page<Resume> pageResume = resumeRepository.findAll(specification, pageable);
+
+        List<ResumeReponse> resumeResponses = pageResume
+                .stream()
+                .map(resumeMapper::toResumeReponse)
+                .toList();
+
+        ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(pageResume.getTotalPages());
+        meta.setTotal(pageResume.getTotalElements());
+
+        ResultPaginationResponse result = new ResultPaginationResponse();
+        result.setMeta(meta);
+        result.setResult(resumeResponses);
+
+        return result;
+
     }
 }

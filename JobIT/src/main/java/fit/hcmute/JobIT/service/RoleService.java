@@ -13,5 +13,5 @@ public interface RoleService {
     RoleResponse updateRole(UpdateRoleRequest updateRoleRequest);
     void deleteRole(Long id);
     ResultPaginationResponse getAllRoles(Specification<Role> specification, Pageable pageable);
-
+    Role getRoleById(Long id);
 }

@@ -16,5 +16,6 @@ public interface ResumeService {
     void deleteResume(Long resumeId);
     ResumeReponse getResumeById(Long resumeId);
     ResultPaginationResponse getAllResumes(Specification<Resume> specification, Pageable pageable);
+    ResultPaginationResponse getAllResumesByUser(Pageable pageable);
 
 }

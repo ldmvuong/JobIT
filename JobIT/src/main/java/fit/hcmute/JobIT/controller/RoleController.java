@@ -51,4 +51,11 @@ public class RoleController {
         ResultPaginationResponse result = roleService.getAllRoles(specification, pageable);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/{id}")
+    @ApiMessage("Get a role by ID")
+    public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
+        Role role = roleService.getRoleById(id);
+        return ResponseEntity.ok(role);
+    }
 }

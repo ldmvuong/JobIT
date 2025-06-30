@@ -55,4 +55,10 @@ public class ResumeController {
                                            Pageable pageable) {
         return ResponseEntity.ok(resumeService.getAllResumes(specification, pageable));
     }
+
+    @PostMapping("/by-user")
+    @ApiMessage("Get all resumes by user")
+    public ResponseEntity<?> getAllResumesByUser(Pageable pageable) {
+        return ResponseEntity.ok(resumeService.getAllResumesByUser(pageable));
+    }
 }

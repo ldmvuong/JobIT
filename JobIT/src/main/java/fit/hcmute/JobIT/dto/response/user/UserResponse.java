@@ -1,5 +1,6 @@
 package fit.hcmute.JobIT.dto.response.user;
 
+import fit.hcmute.JobIT.dto.response.role.RoleSimpleResponse;
 import fit.hcmute.JobIT.enums.EGender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,8 @@ public class UserResponse {
     private Instant createdAt;
     private Instant updatedAt;
     private CompanyUser company;
+
+    private RoleSimpleResponse role;
 
     @Getter
     @Setter
