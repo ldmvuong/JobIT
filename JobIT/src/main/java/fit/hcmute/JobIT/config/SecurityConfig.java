@@ -7,6 +7,7 @@ import fit.hcmute.JobIT.util.property.JwtProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -80,11 +81,9 @@ public class SecurityConfig {
         String [] whiteList = {
                 "/",
                 "/api/v1/auth/login",
-                "api/v1/auth/register",
+                "/api/v1/auth/register",
                 "/api/v1/auth/refresh",
                 "/storage/**",
-                "/api/v1/companies/**",
-                "/api/v1/jobs/**",
         };
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -92,6 +91,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authz ->
                                 authz.requestMatchers(whiteList).permitAll()
+                                        .requestMatchers(HttpMethod.GET , "/api/v1/companies").permitAll()
+                                        .requestMatchers(HttpMethod.GET , "/api/v1/jobs").permitAll()
+                                        .requestMatchers(HttpMethod.GET , "/api/v1/skills").permitAll()
                                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())

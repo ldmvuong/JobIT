@@ -168,7 +168,7 @@ public class AuthController {
      * - Xoá refresh token trong DB.
      * - Trả cookie rỗng để xoá ở phía client.
      */
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     @ApiMessage("Logout user and clear refresh token cookie")
     public ResponseEntity<Void> logout() {
 
