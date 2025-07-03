@@ -15,4 +15,7 @@ public class Skill extends AbstractEntity{
 
     @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY)
     private List<Job> jobs;
+
+    @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY)
+    private List<Subscriber> subscribers;
 }

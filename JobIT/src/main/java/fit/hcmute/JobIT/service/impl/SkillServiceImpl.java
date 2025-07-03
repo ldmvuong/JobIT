@@ -95,6 +95,7 @@ public class SkillServiceImpl implements SkillService {
         // Check if the skill is being used in any job postings
         Skill skill = optionalSkill.get();
         skill.getJobs().forEach(job -> job.getSkills().remove(skill));
+        skill.getSubscribers().forEach(subscriber -> subscriber.getSkills().remove(skill));
 
         skillRepository.deleteById(id);
     }
