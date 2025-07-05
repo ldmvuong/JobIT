@@ -4,14 +4,13 @@ import fit.hcmute.JobIT.dto.request.subcriber.CreateSubscriberRequest;
 import fit.hcmute.JobIT.dto.request.subcriber.UpdateSubscriberRequest;
 import fit.hcmute.JobIT.dto.response.subcriber.SubscriberResponse;
 import fit.hcmute.JobIT.service.SubscriberService;
+import fit.hcmute.JobIT.util.SecurityUtil;
 import fit.hcmute.JobIT.util.annotation.ApiMessage;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
 
 @RestController
 @RequestMapping("/api/v1/subscribers")
@@ -33,5 +32,18 @@ public class SubscriberController {
         return ResponseEntity
                 .ok()
                 .body(subscriberService.updateSubscriber(updateSubscriberRequest));
+    }
+
+    @PostMapping("/skills")
+    @ApiMessage("Get all skills of a subscriber")
+    public ResponseEntity<SubscriberResponse> getAllSubscribers() {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent()
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
+
+        return ResponseEntity
+                .ok()
+                .body(subscriberService.findByEmail(email));
+
     }
 }

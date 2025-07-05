@@ -84,6 +84,7 @@ public class SecurityConfig {
                 "/api/v1/auth/register",
                 "/api/v1/auth/refresh",
                 "/storage/**",
+                "/api/v1/email/**"
         };
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -91,9 +92,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authz ->
                                 authz.requestMatchers(whiteList).permitAll()
-                                        .requestMatchers(HttpMethod.GET , "/api/v1/companies").permitAll()
-                                        .requestMatchers(HttpMethod.GET , "/api/v1/jobs").permitAll()
-                                        .requestMatchers(HttpMethod.GET , "/api/v1/skills").permitAll()
+                                        .requestMatchers(HttpMethod.GET , "/api/v1/companies/**").permitAll()
+                                        .requestMatchers(HttpMethod.GET , "/api/v1/jobs/**").permitAll()
+                                        .requestMatchers(HttpMethod.GET , "/api/v1/skills/**").permitAll()
                                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())

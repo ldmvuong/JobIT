@@ -7,5 +7,7 @@ import fit.hcmute.JobIT.dto.response.subcriber.SubscriberResponse;
 public interface SubscriberService {
     SubscriberResponse createSubscriber(CreateSubscriberRequest createSubscriberRequest);
     SubscriberResponse updateSubscriber(UpdateSubscriberRequest updateSubscriberRequest);
+    void sendSubscribersEmailJobs();
+    SubscriberResponse findByEmail(String email);
 
 }
