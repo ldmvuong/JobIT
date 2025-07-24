@@ -1,0 +1,21 @@
+package fit.hcmute.jobit.service;
+
+import fit.hcmute.jobit.dto.request.resume.CreateResumeRequest;
+import fit.hcmute.jobit.dto.request.resume.UpdateResumeRequest;
+import fit.hcmute.jobit.dto.response.ResultPaginationResponse;
+import fit.hcmute.jobit.dto.response.resume.CreateResumeResponse;
+import fit.hcmute.jobit.dto.response.resume.ResumeReponse;
+import fit.hcmute.jobit.dto.response.resume.UpdateResumeRespone;
+import fit.hcmute.jobit.entity.Resume;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
+public interface ResumeService {
+    CreateResumeResponse createResume(CreateResumeRequest request);
+    UpdateResumeRespone updateResume(UpdateResumeRequest request);
+    void deleteResume(Long resumeId);
+    ResumeReponse getResumeById(Long resumeId);
+    ResultPaginationResponse getAllResumes(Specification<Resume> specification, Pageable pageable);
+    ResultPaginationResponse getAllResumesByUser(Pageable pageable);
+
+}
