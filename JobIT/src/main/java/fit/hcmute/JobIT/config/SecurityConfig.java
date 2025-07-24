@@ -84,7 +84,10 @@ public class SecurityConfig {
                 "/api/v1/auth/register",
                 "/api/v1/auth/refresh",
                 "/storage/**",
-                "/api/v1/email/**"
+                "/api/v1/email/**",
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html",
         };
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -99,10 +102,6 @@ public class SecurityConfig {
                 )
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
-//                .exceptionHandling(
-//                        exceptions -> exceptions
-//                                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint()) //401
-//                                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())) //403
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();

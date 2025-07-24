@@ -38,6 +38,12 @@ public class FormatResponse implements ResponseBodyAdvice<Object> {
             return body;
         }
 
+        String path = request.getURI().getPath();
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+            return body;
+        }
+
+
         if (status >= 400) {
             // If the response is an error, we set the error and message fields
             return body;

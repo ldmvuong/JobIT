@@ -20,6 +20,16 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalException {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<RestResponse<Object>> handleAllException(Exception ex) {
+        RestResponse<Object> res = new RestResponse<>();
+        res.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        res.setMessage("Internal Server Error");
+        res.setError("Internal Server Error");
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+    }
+
     // Xử lý các exception liên quan đến xác thực người dùng, id không hợp lệ
     @ExceptionHandler(value = {
             UsernameNotFoundException.class,

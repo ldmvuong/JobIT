@@ -36,9 +36,10 @@ public class PermissionInterceptor implements HandlerInterceptor {
         System.out.println(">>> httpMethod= " + httpMethod);
         System.out.println(">>> requestURI= " + requestURI);
 
-        String email = SecurityUtil.getCurrentUserLogin().orElse(null);
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() == true ?
+                SecurityUtil.getCurrentUserLogin().get() : "";
 
-        if (email != null && !email.isEmpty()) {
+        if (!email.isEmpty() && !email.equals("anonymousUser")) {
             User user = userService.getUserByEmail(email);
             if (user == null || user.getRole() == null) {
                 throw new PermissionDeniedException("Access denied: user or role not found.");
