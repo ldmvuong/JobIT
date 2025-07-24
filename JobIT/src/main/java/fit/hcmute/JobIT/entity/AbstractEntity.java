@@ -26,12 +26,12 @@ public abstract class AbstractEntity {
     @PrePersist
     public void prePersist() {
         this.createdAt = Instant.now();
-        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
+        this.createdBy = SecurityUtil.getCurrentUserLogin().orElse(null);
     }
 
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = Instant.now();
-        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().orElse(null);
     }
 }

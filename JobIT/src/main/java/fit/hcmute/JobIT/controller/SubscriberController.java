@@ -37,9 +37,8 @@ public class SubscriberController {
     @PostMapping("/skills")
     @ApiMessage("Get all skills of a subscriber")
     public ResponseEntity<SubscriberResponse> getAllSubscribers() {
-        String email = SecurityUtil.getCurrentUserLogin().isPresent()
-                ? SecurityUtil.getCurrentUserLogin().get()
-                : "";
+
+        String email = SecurityUtil.getCurrentUserLogin().orElse("");
 
         return ResponseEntity
                 .ok()

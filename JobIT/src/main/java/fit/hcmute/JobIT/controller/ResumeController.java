@@ -66,7 +66,7 @@ public class ResumeController {
     public ResponseEntity<?> getAllResumes(@Filter Specification<Resume> specification,
                                            Pageable pageable) {
         List<Long> arrJobIds = null;
-        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        String email = SecurityUtil.getCurrentUserLogin().orElse("");
 
         User currentUser = userService.getUserByEmail(email);
         if(currentUser != null) {

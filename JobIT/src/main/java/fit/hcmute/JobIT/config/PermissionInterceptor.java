@@ -36,8 +36,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
         System.out.println(">>> httpMethod= " + httpMethod);
         System.out.println(">>> requestURI= " + requestURI);
 
-        String email = SecurityUtil.getCurrentUserLogin().isPresent() == true ?
-                SecurityUtil.getCurrentUserLogin().get() : "";
+        String email = SecurityUtil.getCurrentUserLogin().orElse("");
 
         if (!email.isEmpty() && !email.equals("anonymousUser")) {
             User user = userService.getUserByEmail(email);
