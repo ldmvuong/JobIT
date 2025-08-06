@@ -9,6 +9,7 @@ import fit.hcmute.jobit.entity.Company;
 import fit.hcmute.jobit.entity.Role;
 import fit.hcmute.jobit.entity.User;
 import fit.hcmute.jobit.exception.IdInvalidException;
+import fit.hcmute.jobit.repository.CompanyRepository;
 import fit.hcmute.jobit.repository.UserRepository;
 import fit.hcmute.jobit.service.CompanyService;
 import fit.hcmute.jobit.service.RoleService;
@@ -30,7 +31,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final CompanyService companyService;
+    private final CompanyRepository companyRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
@@ -43,7 +44,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (user.getCompany() != null) {
-            Optional<Company> companyOptional = companyService.findById(user.getCompany().getId());
+            Optional<Company> companyOptional = companyRepository.findById(user.getCompany().getId());
             user.setCompany(companyOptional.orElse(null));
         }
 
@@ -102,7 +103,7 @@ public class UserServiceImpl implements UserService {
         userCurrent.setAge(user.getAge());
 
         if (user.getCompany() != null) {
-            Optional<Company> companyOptional = companyService.findById(user.getCompany().getId());
+            Optional<Company> companyOptional = companyRepository.findById(user.getCompany().getId());
             userCurrent.setCompany(companyOptional.orElse(null));
         }
 
@@ -154,5 +155,19 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new IdInvalidException("Refresh token or email is invalid.");
         }
+    }
+
+    @Override
+    public List<UserResponse> findHrUsersByCompany(Long companyId) {
+
+        if (companyRepository.findById(companyId).isEmpty()) {
+            throw new IdInvalidException("Company not found with ID: " + companyId);
+        }
+
+        List<User> hrUsers = userRepository.findByCompany_IdAndRole_Name(companyId, "HR");
+
+        return hrUsers.stream()
+                .map(userMapper::toUserResponse)
+                .toList();
     }
 }

@@ -6,9 +6,11 @@ import fit.hcmute.jobit.dto.response.ResultPaginationResponse;
 import fit.hcmute.jobit.dto.response.job.CreateJobResponse;
 import fit.hcmute.jobit.dto.response.job.JobResponse;
 import fit.hcmute.jobit.dto.response.job.UpdateJobResponse;
+import fit.hcmute.jobit.entity.Company;
 import fit.hcmute.jobit.entity.Job;
 import fit.hcmute.jobit.entity.Skill;
 import fit.hcmute.jobit.exception.IdInvalidException;
+import fit.hcmute.jobit.repository.CompanyRepository;
 import fit.hcmute.jobit.repository.JobRepository;
 import fit.hcmute.jobit.repository.SkillRepository;
 import fit.hcmute.jobit.service.JobService;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +31,7 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
     private final SkillRepository skillRepository;
     private final JobMapper jobMapper;
+    private final CompanyRepository companyRepository;
 
     @Override
     public JobResponse getJobById(Long id) {
@@ -55,6 +59,11 @@ public class JobServiceImpl implements JobService {
         List<Skill> skills = skillRepository.findByIdIn(skillIds);
         job.setSkills(skills);
 
+        Company company = companyRepository.findById(jobRequest.getCompany().getId())
+                .orElseThrow(() -> new IdInvalidException("Company not found with id: " + jobRequest.getCompany().getId()));
+
+        job.setCompany(company);
+
         return jobMapper.toCreateResponse(jobRepository.save(job));
     }
 
@@ -70,6 +79,7 @@ public class JobServiceImpl implements JobService {
         // Cập nhật từ DTO sang entity đang tồn tại
         jobMapper.updateFromRequest(jobRequest, existingJob);
 
+
         // Xử lý danh sách skillId (nếu có)
         List<Long> skillIds = Optional.ofNullable(jobRequest.getSkills())
                 .orElse(Collections.emptyList())
@@ -79,6 +89,12 @@ public class JobServiceImpl implements JobService {
 
         List<Skill> skills = skillRepository.findByIdIn(skillIds);
         existingJob.setSkills(skills);
+
+        Company company = companyRepository.findById(jobRequest.getCompany().getId())
+                .orElseThrow(() -> new IdInvalidException("Company not found with id: " + jobRequest.getCompany().getId()));
+
+        existingJob.setCompany(company);
+
 
         Job updatedJob = jobRepository.save(existingJob);
         return jobMapper.toUpdateResponse(updatedJob);
@@ -113,5 +129,18 @@ public class JobServiceImpl implements JobService {
         response.setMeta(meta);
         response.setResult(jobResponses);
         return response;
+    }
+
+    @Override
+    public List<JobResponse> findJobsByCompany(Long companyId) {
+        if (companyRepository.findById(companyId).isEmpty()) {
+            throw new IdInvalidException("Company not found with ID: " + companyId);
+        }
+
+        List<Job> jobs = jobRepository.findByCompany_Id(companyId);
+
+        return jobs.stream()
+                .map(jobMapper::toJobResponse)
+                .toList();
     }
 }

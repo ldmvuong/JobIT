@@ -35,7 +35,7 @@ public class User extends AbstractEntity{
     @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Resume> resumes;
 
     @ManyToOne

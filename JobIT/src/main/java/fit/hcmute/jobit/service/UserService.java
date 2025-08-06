@@ -8,6 +8,8 @@ import fit.hcmute.jobit.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 public interface UserService {
     CreateUserResponse createUser(User user);
 
@@ -27,4 +29,5 @@ public interface UserService {
 
     User findByRefreshTokenAndEmail(String refreshToken, String email);
 
+    List<UserResponse> findHrUsersByCompany( Long companyId);
 }

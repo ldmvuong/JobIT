@@ -66,7 +66,7 @@ public class PermissionServiceImpl implements PermissionService {
                 .toList();
 
         ResultPaginationResponse.Meta meta = new ResultPaginationResponse.Meta();
-        meta.setPage(pageable.getPageNumber());
+        meta.setPage(pageable.getPageNumber() +1 );
         meta.setPageSize(pageable.getPageSize());
         meta.setTotal(permissions.getTotalElements());
         meta.setPages(permissions.getTotalPages());

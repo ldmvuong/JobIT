@@ -2,10 +2,12 @@ package fit.hcmute.jobit.service;
 
 import fit.hcmute.jobit.dto.response.ResultPaginationResponse;
 import fit.hcmute.jobit.dto.response.company.CompanyResponse;
+import fit.hcmute.jobit.dto.response.user.UserResponse;
 import fit.hcmute.jobit.entity.Company;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CompanyService {
@@ -21,4 +23,6 @@ public interface CompanyService {
     Company updateCompany(Company company);
 
     void deleteCompany(Long id);
+
+    ResultPaginationResponse getHrsByCompanyId(Long id);
 }

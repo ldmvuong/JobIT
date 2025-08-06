@@ -39,7 +39,7 @@ public class JobController {
     @ApiMessage("Delete a job by ID")
     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
         jobService.deleteJob(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/{id}")

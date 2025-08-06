@@ -25,7 +25,7 @@ public class FormatResponse implements ResponseBodyAdvice<Object> {
                                   ServerHttpResponse response) {
 
 
-        RestResponse<Object> restResponse = new RestResponse<Object>();
+        RestResponse<Object> restResponse = new RestResponse<>();
 
         // We can get the status code from the response
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) response).getServletResponse();

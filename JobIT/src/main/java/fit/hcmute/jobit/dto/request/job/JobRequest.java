@@ -1,6 +1,7 @@
 package fit.hcmute.jobit.dto.request.job;
 
 
+import fit.hcmute.jobit.dto.request.IdRequest;
 import fit.hcmute.jobit.enums.ELevel;
 import fit.hcmute.jobit.util.annotation.enumvalidate.subnet.EnumSubset;
 
@@ -33,4 +34,6 @@ public class JobRequest {
     public static class SkillId {
         Long id;
     }
+
+    private IdRequest company;
 }

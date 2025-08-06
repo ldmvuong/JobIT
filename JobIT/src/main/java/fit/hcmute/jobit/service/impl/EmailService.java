@@ -4,6 +4,7 @@ import fit.hcmute.jobit.repository.JobRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -19,20 +20,12 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j(topic = "Email Service")
 public class EmailService {
     private final MailSender mailSender;
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
     private JobRepository jobRepository;
-
-
-    public void sentEmail() {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("ldmvuongg@gmail.com");
-        message.setSubject("Test Email");
-        message.setText("This is a test email sent from JobIT application.");
-        mailSender.send(message);
-    }
 
     private void sendEmailSync(String to, String subject, String content, boolean isMultipart, boolean isHtml) {
 
@@ -45,7 +38,7 @@ public class EmailService {
             message.setText(content, isHtml);
             javaMailSender.send(mimeMessage);
         } catch (MailException | MessagingException e) {
-            System.out.println("Email error sender" + e);
+            log.error("Error sending email to {}: {}", to, e.getMessage(), e);
         }
     }
 

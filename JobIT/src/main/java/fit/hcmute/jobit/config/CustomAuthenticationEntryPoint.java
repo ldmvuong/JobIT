@@ -36,7 +36,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         // Set the response status and content type VN
         response.setContentType("application/json;charset=UTF-8");
 
-        RestResponse<Object> restResponse = new RestResponse<Object>();
+        RestResponse<Object> restResponse = new RestResponse<>();
         restResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         String errorMessage = Optional.ofNullable(authException.getCause())
                         .map(Throwable :: getMessage)

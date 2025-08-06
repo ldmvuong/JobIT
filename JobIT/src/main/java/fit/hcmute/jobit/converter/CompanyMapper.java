@@ -1,5 +1,6 @@
 package fit.hcmute.jobit.converter;
 
+import fit.hcmute.jobit.dto.response.company.CompanyNameResponse;
 import fit.hcmute.jobit.dto.response.company.CompanyResponse;
 import fit.hcmute.jobit.dto.response.user.CreateUserResponse;
 import fit.hcmute.jobit.dto.response.user.UpdateUserResponse;
@@ -14,4 +15,5 @@ public interface CompanyMapper {
     UserResponse.CompanyUser toUserResponse(Company company);
     UpdateUserResponse.CompanyUser toUpdateUserResponse(Company company);
     CompanyResponse toCompanyResponse(Company company);
+    CompanyNameResponse toCompanyNameResponse(Company company);
 }

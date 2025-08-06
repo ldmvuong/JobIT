@@ -3,6 +3,7 @@ package fit.hcmute.jobit.service.impl;
 import fit.hcmute.jobit.service.IFileService;
 import fit.hcmute.jobit.util.property.FileProperties;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j(topic = "File Service")
 public class FileServiceImpl implements IFileService {
 
     private final FileProperties fileProperties;
@@ -29,12 +31,12 @@ public class FileServiceImpl implements IFileService {
         if (!tmpDir.isDirectory()) {
             try {
                 Files.createDirectory(tmpDir.toPath());
-                System.out.println(">>> CREATE NEW DIRECTORY SUCCESSFUL, PATH = " + folder);
+                log.info(">>> CREATE NEW DIRECTORY SUCCESSFUL, PATH = {}", folder);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            System.out.println(">>> SKIP MAKING DIRECTORY, ALREADY EXISTS");
+            log.info(">>> SKIP MAKING DIRECTORY, ALREADY EXISTS");
         }
 
     }

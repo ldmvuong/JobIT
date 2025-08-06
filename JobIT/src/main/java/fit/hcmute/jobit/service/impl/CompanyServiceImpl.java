@@ -3,7 +3,9 @@ package fit.hcmute.jobit.service.impl;
 import fit.hcmute.jobit.converter.CompanyMapper;
 import fit.hcmute.jobit.dto.response.company.CompanyResponse;
 import fit.hcmute.jobit.dto.response.ResultPaginationResponse;
+import fit.hcmute.jobit.dto.response.user.UserResponse;
 import fit.hcmute.jobit.entity.Company;
+import fit.hcmute.jobit.entity.Job;
 import fit.hcmute.jobit.entity.User;
 import fit.hcmute.jobit.exception.IdInvalidException;
 import fit.hcmute.jobit.repository.CompanyRepository;
@@ -97,4 +99,11 @@ public class CompanyServiceImpl implements CompanyService {
             companyRepository.deleteById(id);
         }
     }
+
+    @Override
+    public ResultPaginationResponse getHrsByCompanyId(Long id) {
+        return null;
+    }
+
+
 }

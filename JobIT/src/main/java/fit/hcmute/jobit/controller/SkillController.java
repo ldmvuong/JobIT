@@ -47,6 +47,6 @@ public class SkillController {
     @ApiMessage("Delete a skill by ID")
     public ResponseEntity<Void> deleteSkill(@PathVariable Long id) {
         skillService.deleteSkill(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(null);
     }
 }
