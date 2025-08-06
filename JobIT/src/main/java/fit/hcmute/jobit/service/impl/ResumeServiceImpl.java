@@ -50,6 +50,11 @@ public class ResumeServiceImpl implements ResumeService {
             throw new IdInvalidException("User or Job not found");
         }
 
+        boolean alreadyApplied = resumeRepository.existsByUser_IdAndJob_Id(request.getUser().getId(), request.getJob().getId());
+        if (alreadyApplied) {
+            throw new IdInvalidException("User has already applied to this job");
+        }
+
         Resume resume = resumeMapper.toResume(request);
         resume.setUser(userOptional.get());
         resume.setJob(jobOptional.get());
@@ -144,6 +149,18 @@ public class ResumeServiceImpl implements ResumeService {
         result.setResult(resumeResponses);
 
         return result;
+
+    }
+
+    @Override
+    public List<ResumeReponse> getResumesByJobId(Long jobId) {
+        Optional<Job>  jobOptional = jobRepository.findById(jobId);
+        if (jobOptional.isEmpty()) {
+            throw new IdInvalidException("Job not found with id: " + jobId);
+        }
+
+        List<Resume> resumes = resumeRepository.findByJob_Id(jobId);
+        return resumes.stream().map(resumeMapper::toResumeReponse).toList();
 
     }
 }

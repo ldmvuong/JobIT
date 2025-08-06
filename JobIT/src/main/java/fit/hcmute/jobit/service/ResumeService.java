@@ -10,6 +10,8 @@ import fit.hcmute.jobit.entity.Resume;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 public interface ResumeService {
     CreateResumeResponse createResume(CreateResumeRequest request);
     UpdateResumeRespone updateResume(UpdateResumeRequest request);
@@ -17,5 +19,6 @@ public interface ResumeService {
     ResumeReponse getResumeById(Long resumeId);
     ResultPaginationResponse getAllResumes(Specification<Resume> specification, Pageable pageable);
     ResultPaginationResponse getAllResumesByUser(Pageable pageable);
+    List<ResumeReponse> getResumesByJobId(Long jobId);
 
 }
